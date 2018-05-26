@@ -8,5 +8,7 @@ namespace PaymentGateway.CommandLine
         {
             Console.WriteLine("Hello World!");
         }
-    }
-}
+
+
+    } //class
+} //namespace
