@@ -5,7 +5,7 @@
 /// </summary>
 namespace PaymentGateway.Model.Entity
 {
-    enum CreditCardBrandEnum
+    public enum CreditCardBrandEnum
     {
         [Description("Elo")]
         Elo = 1,

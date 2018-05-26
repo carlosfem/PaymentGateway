@@ -2,6 +2,7 @@
 using System;
 
 using PaymentGateway.Model.Entity;
+using AntiFraud = PaymentGateway.Model.Entity.AntiFraud;
 
 
 namespace PaymentGateway.CommandLine
@@ -12,7 +13,12 @@ namespace PaymentGateway.CommandLine
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            //var req = AntiFraud.Request()
+            var req = new AntiFraud.Request();
+
+            var item = new AntiFraud.Item()
+            {
+                ID = "oi"
+            };
         }
 
 
