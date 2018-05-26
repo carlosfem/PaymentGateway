@@ -8,9 +8,12 @@ namespace PaymentGateway.Model.Entity
     enum CreditCardBrandEnum
     {
         [Description("Elo")]
-        Elo         = 1,
-        Visa        = 2,
-        Hipercard   = 3,
-        Mastercard  = 4
+        Elo = 1,
+        [Description("Visa")]
+        Visa = 2,
+        [Description("Hipercard")]
+        Hipercard = 3,
+        [Description("Mastercard")]
+        Mastercard = 4
     }
 }
