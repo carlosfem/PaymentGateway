@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.IO;
+using System.Linq;
 
 using PaymentGateway.Model.DAL;
 using PaymentGateway.Model.Entity;
@@ -27,18 +28,23 @@ namespace PaymentGateway.CommandLine
 
             //var req = JsonConvert.DeserializeObject<Entity.Operators.Request>(jsonRequest);
 
-            var gate = new Gateway(1);
-            var card = PersonRepository.GetCard("123456");
+            //var gate = new Gateway(3);
+            //var card = PersonRepository.GetCard("123456");
 
-            var items = new AntiFraud.Item[]
-            {
-                new AntiFraud.Item("1", "Item1", 10, 2),
-                new AntiFraud.Item("2", "Item2", 20, 3),
-                new AntiFraud.Item("3", "Item3", 30, 4),
-                new AntiFraud.Item("4", "Item4", 40, 5)
-            };
+            //var items = new AntiFraud.Item[]
+            //{
+            //    new AntiFraud.Item("1", "Item1", 10, 2),
+            //    new AntiFraud.Item("2", "Item2", 20, 3),
+            //    new AntiFraud.Item("3", "Item3", 30, 4),
+            //    new AntiFraud.Item("4", "Item4", 40, 5)
+            //};
 
-            gate.MakeRequest(items, 1, card, 1);
+            //gate.MakeRequest(items, 1, card, 1);
+
+            var allOperators = StoreRepository.GetOperator();
+            var store = StoreRepository.GetStore(3);
+
+            var teste = allOperators.SequenceEqual(store.Operators);
         }
 
 

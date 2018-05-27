@@ -28,5 +28,18 @@ namespace PaymentGateway.Model.Entity
 
         public int CountryCode { get; set; }
 
+        /// <summary>
+        /// Equality implementation.
+        /// </summary>
+        /// <param name="other">Other phone instance</param>
+        public bool Equals(Phone other)
+        {
+            return Type == other.Type
+                && AreaCode == other.AreaCode
+                && Number == other.Number
+                && CountryCode == other.CountryCode;
+        }
+
+
     } //class
 } //namespace

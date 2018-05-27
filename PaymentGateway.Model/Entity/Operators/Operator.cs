@@ -41,6 +41,15 @@ namespace PaymentGateway.Model.Entity
             return new Operator(id, name);
         }
 
+        /// <summary>
+        /// Equality implementation.
+        /// </summary>
+        /// <param name="other">Other operator instance</param>
+        public bool Equals(Operator other)
+        {
+            return ID == other.ID && Name == other.Name;
+        }
+
 
     } //class
 } //namespace

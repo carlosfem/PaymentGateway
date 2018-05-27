@@ -27,10 +27,20 @@ namespace PaymentGateway.Model.Entity
             if (row is null)
                 return null;
 
-            var key   = Helpers.ConvertFromDBVal<string>(row["ApiKey"]);
+            var key = Helpers.ConvertFromDBVal<string>(row["ApiKey"]);
             var login = Helpers.ConvertFromDBVal<string>(row["LoginToken"]);
 
             return new AntiFraudInfo(key, login);
+        }
+
+
+        /// <summary>
+        /// Equality implementation.
+        /// </summary>
+        /// <param name="other">Other AntiFraudInfo instance</param>
+        public bool Equals(AntiFraudInfo other)
+        {
+            return ApiKey == other.ApiKey && LoginToken == other.LoginToken;
         }
 
 

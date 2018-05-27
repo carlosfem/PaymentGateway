@@ -32,16 +32,13 @@ namespace PaymentGateway.Model.Business
         /// <returns>
         /// True if the sale is authorized by the anti-fraud system or if the store doesnt use the system.
         /// </returns>
-        private bool EvaluateAntiFraud(IEnumerable<AntiFraud.Item> items, Operators.Transaction transaction, string orderId)
+        public bool EvaluateAntiFraud(IEnumerable<AntiFraud.Item> items, Operators.Transaction transaction, string orderId)
         {
             if (Store.UseAntiFraud)
             {
-                var payment = new AntiFraud.Payment(transaction);
                 var order = new AntiFraud.Order(Store, items, transaction, orderId);
-
                 var orders = new List<AntiFraud.Order>() { order };
                 var request = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
-
                 return RequestManager.MakeAntiFraudRequest(request);
             }
             else
@@ -70,7 +67,7 @@ namespace PaymentGateway.Model.Business
             {
                 // Makes request to the operator
                 var request = new Operators.Request(transaction, orderId);
-                Entity.Operators.Response response;
+                Operators.Response response;
 
                 var op = Store.Operators.ElementAt(operatorIndex);
                 switch (op.Name)

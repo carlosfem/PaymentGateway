@@ -38,6 +38,20 @@ namespace PaymentGateway.Model.Entity
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
 
+        /// <summary>
+        /// Equality implementation.
+        /// </summary>
+        /// <param name="other">Other address instance</param>
+        public bool Equals(Address other)
+        {
+            return City == other.City
+                && State == other.State
+                && ZipCode == other.ZipCode
+                && Country == other.Country
+                && AddressLine1 == other.AddressLine1
+                && AddressLine2 == other.AddressLine2;
+        }
+
 
     } //class
 } //namespace

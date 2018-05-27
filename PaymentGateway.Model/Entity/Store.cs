@@ -14,7 +14,7 @@ namespace PaymentGateway.Model.Entity
         /// <summary>
         /// Class constructor requires all mandatory fields.
         /// </summary>
-        public Store(int id, string name, IEnumerable<Operator> operators, AntiFraudInfo antiFraud, string merchantId, string ip)
+        public Store(int id, string name, IEnumerable<Operator> operators, AntiFraudInfo antiFraud, string merchantId, string ip, Person owner)
         {
             ID            = id;
             Name          = name;
@@ -22,6 +22,7 @@ namespace PaymentGateway.Model.Entity
             AntiFraudInfo = antiFraud;
             MerchantId    = merchantId;
             IpAddress     = ip;
+            Owner         = owner;
         }
 
         /// <summary>
@@ -83,10 +84,12 @@ namespace PaymentGateway.Model.Entity
             var operators = StoreRepository.GetStoreOperators(id);
             var antiFraud = StoreRepository.GetStoreAntiFraudInfo(id);
 
+            if (!operators.Any())
+                throw new InvalidOperationException("Invalid store. All stores must work with at least one Operator.");
             if (operators.Any(o => o.Name == "Stone") && merchantId is null)
                 throw new InvalidOperationException("Invalid store. All stores working with Stone must have a merchant ID.");
 
-            return new Store(id, name, operators, antiFraud, merchantId, ipAddress);
+            return new Store(id, name, operators, antiFraud, merchantId, ipAddress, owner);
         }
 
 

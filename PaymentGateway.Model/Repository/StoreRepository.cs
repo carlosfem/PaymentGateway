@@ -29,27 +29,31 @@ namespace PaymentGateway.Model.Repository
         }
 
         /// <summary>
+        /// Gets all of the Operator registers on the Operator table.
+        /// </summary>
+        public static IEnumerable<Operator> GetOperator()
+        {
+            var sqlQuery = "select * from Operator";
+            var db = new DbGateway();
+            var table = db.Read(sqlQuery);
+            return table.Rows.Cast<DataRow>().Select(x => (Operator)x);
+        }
+
+        /// <summary>
         /// Gets all operators of a given store.
         /// </summary>
         /// <param name="id">Store identifier</param>
         public static IEnumerable<Operator> GetStoreOperators(int id)
         {
-            try
-            {
-                var sqlQuery = 
-                    $@"select * from Operator o
-                        inner join AssociationStoreOperator a on a.IdOperator = o.Id
-                        inner join Store s on s.Id = a.IdStore
-                      where s.Id = {id}";
+            var sqlQuery = 
+                $@"select o.* from Operator o
+                    inner join AssociationStoreOperator a on a.IdOperator = o.Id
+                    inner join Store s on s.Id = a.IdStore
+                    where s.Id = {id}";
 
-                var db = new DbGateway();
-                var table = db.Read(sqlQuery);
-                return table.Rows.Cast<DataRow>().Select(x => (Operator)x);
-            }
-            catch (InvalidOperationException)
-            {
-                throw new InvalidOperationException("Invalid store. All stores must have at least one credit card operator.");
-            }
+            var db = new DbGateway();
+            var table = db.Read(sqlQuery);
+            return table.Rows.Cast<DataRow>().Select(x => (Operator)x);
         }
 
         /// <summary>
