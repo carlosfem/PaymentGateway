@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
+
+using PaymentGateway.Model.Business;
+using PaymentGateway.Model.Repository;
 
 
 namespace PaymentGateway.Model.Entity
@@ -41,6 +45,32 @@ namespace PaymentGateway.Model.Entity
         /// Owner of the store.
         /// </summary>
         public Person Owner { get; private set; }
+
+
+        /// <summary>
+        /// Conversion from a DataRow into a Store instance.
+        /// </summary>
+        public static explicit operator Store(DataRow row)
+        {
+            if (row is null)
+                throw new InvalidOperationException("Store not found!");
+
+            var id           = Helpers.ConvertFromDBVal<int>(row["Id"]);
+            var name         = Helpers.ConvertFromDBVal<string>(row["Name"]);
+            var useAntiFraud = Helpers.ConvertFromDBVal<bool>(row["UseAntiFraud"]);
+            var idOwner      = Helpers.ConvertFromDBVal<string>(row["IdOwner"]);
+            var owner = PersonRepository.GetPerson(idOwner);
+
+            try
+            {
+                var operators = StoreRepository.GetStoreOperators(id);
+                return new Store(id, name, operators, useAntiFraud);
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Invalid store. All stores must have at least one credit card operator.");
+            }
+        }
 
 
     } //class

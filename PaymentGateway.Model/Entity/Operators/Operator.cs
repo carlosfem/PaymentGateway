@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Data;
+
+using PaymentGateway.Model.Business;
 
 
 namespace PaymentGateway.Model.Entity
@@ -23,6 +26,20 @@ namespace PaymentGateway.Model.Entity
         /// Operator name.
         /// </summary>
         public string Name { get; private set; }
+
+
+        /// <summary>
+        /// Conversion from a DataRow into a Operator instance.
+        /// </summary>
+        public static explicit operator Operator(DataRow row)
+        {
+            if (row is null)
+                throw new InvalidOperationException("Operator not found!");
+
+            var id   = Helpers.ConvertFromDBVal<int>(row["Id"]);
+            var name = Helpers.ConvertFromDBVal<string>(row["Name"]);
+            return new Operator(id, name);
+        }
 
 
     } //class

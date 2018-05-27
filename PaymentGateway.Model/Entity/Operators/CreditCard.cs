@@ -1,4 +1,10 @@
 ﻿
+using System;
+using System.Data;
+
+using PaymentGateway.Model.Business;
+using PaymentGateway.Model.Repository;
+
 
 namespace PaymentGateway.Model.Entity.Operators
 {
@@ -7,13 +13,13 @@ namespace PaymentGateway.Model.Entity.Operators
         /// <summary>
         /// Class constructor requires all mandatory fields.
         /// </summary>
-        public CreditCard(CreditCardBrandEnum brand, string number, int month, int year, string holder, string security)
+        public CreditCard(CreditCardBrandEnum brand, string number, int month, int year, Person holder, string security)
         {
             CreditCardBrand  = brand;
             CreditCardNumber = number;
             ExpMonth         = month;
             ExpYear          = year;
-            HolderName       = holder;
+            Holder           = holder;
             SecurityCode     = security;
         }
 
@@ -21,9 +27,29 @@ namespace PaymentGateway.Model.Entity.Operators
         public string CreditCardNumber { get; private set; }
         public int ExpMonth { get; private set; }
         public int ExpYear { get; private set; }
-        public string HolderName { get; private set; }
+        public Person Holder { get; private set; }
         public string SecurityCode { get; private set; }
-        
+
+
+        /// <summary>
+        /// Conversion from a DataRow into a CreditCard instance.
+        /// </summary>
+        public static explicit operator CreditCard(DataRow row)
+        {
+            if (row is null)
+                throw new InvalidOperationException("Credit card not found!");
+
+            var number     = Helpers.ConvertFromDBVal<string>(row["Number"]);
+            var brand      = Helpers.ConvertFromDBVal<CreditCardBrandEnum>(row["Brand"]);
+            var expiration = Helpers.ConvertFromDBVal<DateTime>(row["Expiration"]);
+            var security   = Helpers.ConvertFromDBVal<string>(row["SecurityCode"]);
+            var idHolder   = Helpers.ConvertFromDBVal<string>(row["IdHolder"]);
+
+            var holder = PersonRepository.GetPerson(idHolder);
+
+            return new CreditCard(brand, number, expiration.Month, expiration.Year, holder, security);
+        }
+
 
     } //class
 } //namespace

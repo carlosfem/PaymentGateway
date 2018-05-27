@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
+
+using PaymentGateway.Model.Business;
+using PaymentGateway.Model.Repository;
 
 
 namespace PaymentGateway.Model.Entity
@@ -46,7 +50,33 @@ namespace PaymentGateway.Model.Entity
         // Optional
         public string Gender { get; set; }
         public string Email { get; set; }
-        public string BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
+
+
+        /// <summary>
+        /// Conversion from a DataRow into a Person instance.
+        /// </summary>
+        public static explicit operator Person(DataRow row)
+        {
+            if (row is null)
+                throw new InvalidOperationException("Person not found!");
+
+            var id        = Helpers.ConvertFromDBVal<string>(row["Id"]);
+            var type      = Helpers.ConvertFromDBVal<int>(row["Type"]);
+            var name      = Helpers.ConvertFromDBVal<string>(row["Name"]);
+            var gender    = Helpers.ConvertFromDBVal<string>(row["Gender"]);
+            var email     = Helpers.ConvertFromDBVal<string>(row["Email"]);
+            var birthdate = Helpers.ConvertFromDBVal<DateTime?>(row["BirthDate"]);
+
+            var address = PersonRepository.GetDummyAddress();
+            var phone = PersonRepository.GetDummyPhone();
+            var person = new Person(id, type, name, address, new Phone[] { phone });
+            person.Gender = gender;
+            person.Email = email;
+            person.BirthDate = birthdate;
+
+            return person;
+        }
 
 
     } //class
