@@ -22,9 +22,9 @@ namespace PaymentGateway.Model.Entity
             CountryCode = countryCode;
         }
 
-        public int Type { get; private set; }
-        public int AreaCode { get; private set; }
-        public int Number { get; private set; }
+        public int Type { get; set; }
+        public int AreaCode { get; set; }
+        public int Number { get; set; }
 
         public int CountryCode { get; set; }
 

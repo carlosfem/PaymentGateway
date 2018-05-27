@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 using PaymentGateway.Model.Entity.Operators;
@@ -26,7 +27,8 @@ namespace PaymentGateway.Model.Business
         /// <param name="transaction">Transaction to request</param>
         public static void MakeCieloRequest(Transaction transaction)
         {
-
+            var str = JsonConvert.SerializeObject(transaction);
+            dynamic trans = JsonConvert.DeserializeObject<Transaction>(str);
         }
 
         // Makes a request to the ClearSale API.

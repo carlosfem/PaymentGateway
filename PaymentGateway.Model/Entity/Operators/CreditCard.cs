@@ -23,12 +23,12 @@ namespace PaymentGateway.Model.Entity.Operators
             SecurityCode     = security;
         }
 
-        public CreditCardBrandEnum CreditCardBrand { get; private set; }
-        public string CreditCardNumber { get; private set; }
-        public int ExpMonth { get; private set; }
-        public int ExpYear { get; private set; }
-        public Person Holder { get; private set; }
-        public string SecurityCode { get; private set; }
+        public CreditCardBrandEnum CreditCardBrand { get; set; }
+        public string CreditCardNumber { get; set; }
+        public int ExpMonth { get; set; }
+        public int ExpYear { get; set; }
+        public Person Holder { get; set; }
+        public string SecurityCode { get; set; }
 
 
         /// <summary>

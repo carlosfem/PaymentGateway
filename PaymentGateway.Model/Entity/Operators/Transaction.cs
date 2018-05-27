@@ -21,9 +21,9 @@ namespace PaymentGateway.Model.Entity.Operators
         }
 
         // Mandatory
-        public decimal AmountInCents { get; private set; }
-        public CreditCard CreditCard { get; private set; }
-        public int InstallmentCount { get; private set; }
+        public decimal AmountInCents { get; set; }
+        public CreditCard CreditCard { get; set; }
+        public int InstallmentCount { get; set; }
 
         // Optional (only for stored transactions)
         public bool Authorized { get; set; }
