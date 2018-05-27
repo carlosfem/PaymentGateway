@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
 using PaymentGateway.Model.Business;
@@ -8,26 +9,49 @@ using PaymentGateway.Model.Repository;
 
 namespace PaymentGateway.Model.Entity.Operators
 {
+    [JsonObject("Payment")]
     public class Transaction
     {
+        /// <summary>
+        /// Standard constructor, required for Json deserialization.
+        /// </summary>
+        public Transaction()
+        {
+
+        }
+
         /// <summary>
         /// Class constructor requires all mandatory fields.
         /// </summary>
         public Transaction(decimal amount, CreditCard card, int installments)
         {
             AmountInCents    = amount;
+            Type             = "CreditCard";
             CreditCard       = card;
             InstallmentCount = installments;
         }
 
-        // Mandatory
-        public decimal AmountInCents { get; set; }
-        public CreditCard CreditCard { get; set; }
-        public int InstallmentCount { get; set; }
 
         // Optional (only for stored transactions)
+        [JsonIgnore()]
         public bool Authorized { get; set; }
+
+        [JsonIgnore()]
         public string Message { get; set; }
+
+
+        // Mandatory
+        [JsonProperty("Amount")]
+        public decimal AmountInCents { get; set; }
+
+        [JsonProperty("Type")]
+        public string Type { get; set; }
+
+        [JsonProperty("CreditCard")]
+        public CreditCard CreditCard { get; set; }
+
+        [JsonProperty("Installments")]
+        public int InstallmentCount { get; set; }
 
 
         /// <summary>

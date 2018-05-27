@@ -1,22 +1,46 @@
 ﻿
-using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 
 namespace PaymentGateway.Model.Entity.Operators
 {
+    public class Customer
+    {
+        public Customer(string name) { Name = name; }
+
+        [JsonProperty("Name")]
+        public string Name { get; set; }
+    }
+
+    /// <summary>
+    /// Wraps requests to an operator's API.
+    /// </summary>
     public class Request
     {
-        public Collection<Transaction> Transactions { get; set; }
-        public Order Order { get; set; }
+        /// <summary>
+        /// Standard constructor, required for Json deserialization.
+        /// </summary>
+        public Request()
+        {
 
-    } //classRequest
+        }
+
+        public Request(Transaction transaction, string orderIdentifier)
+        {
+            Transaction = transaction;
+            OrderId = orderIdentifier;
+            Customer = new Customer(transaction.CreditCard.Holder.Name);
+        }
+
+        [JsonProperty("Payment")]
+        public Transaction Transaction { get; set; }
+
+        [JsonProperty("MerchantOrderId")]
+        public string OrderId { get; set; }
+
+        [JsonProperty("Customer")]
+        public Customer Customer { get; set; }
 
 
-    public class Order
-    {
-        public string OrderReference { get; set; }
-
-    } //classOrder
-
-
+    } //class
 } //namespace

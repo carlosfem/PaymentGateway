@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 
@@ -18,6 +20,20 @@ namespace PaymentGateway.Model.Business
                 : (T)obj;
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the description of an enum object.
+        /// </summary>
+        public static string GetDescription(this Enum myEnum)
+        {
+            var fieldInfo = myEnum.GetType().GetField(myEnum.ToString());
+            var attributes = (DescriptionAttribute[])fieldInfo
+                .GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+            return attributes.Length > 0
+                ? attributes[0].Description
+                : myEnum.ToString();
         }
 
 

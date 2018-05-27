@@ -34,15 +34,34 @@ namespace PaymentGateway.Model.Repository
         /// <param name="id">Store identifier</param>
         public static IEnumerable<Operator> GetStoreOperators(int id)
         {
-            var sqlQuery = 
-                $@"select * from Operator o
-                    inner join AssociationStoreOperator a on a.IdOperator = o.Id
-                    inner join Store s on s.Id = a.IdStore
-                  where s.Id = {id}";
+            try
+            {
+                var sqlQuery = 
+                    $@"select * from Operator o
+                        inner join AssociationStoreOperator a on a.IdOperator = o.Id
+                        inner join Store s on s.Id = a.IdStore
+                      where s.Id = {id}";
 
+                var db = new DbGateway();
+                var table = db.Read(sqlQuery);
+                return table.Rows.Cast<DataRow>().Select(x => (Operator)x);
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Invalid store. All stores must have at least one credit card operator.");
+            }
+        }
+
+        /// <summary>
+        /// Gets all anti-fraud  of a given store.
+        /// </summary>
+        /// <param name="id">Store identifier</param>
+        public static AntiFraudInfo GetStoreAntiFraudInfo(int id)
+        {
+            var sqlQuery = $@"select * from AssociationStoreAntiFraud where IdStore = {id}";
             var db = new DbGateway();
             var table = db.Read(sqlQuery);
-            return table.Rows.Cast<DataRow>().Select(x => (Operator)x);
+            return (AntiFraudInfo)table.Rows.Cast<DataRow>().FirstOrDefault();
         }
 
         /// <summary>

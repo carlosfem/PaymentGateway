@@ -2,11 +2,37 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using PaymentGateway.Model.Entity;
+using Operators = PaymentGateway.Model.Entity.Operators;
+
 
 namespace PaymentGateway.Model.Entity.AntiFraud
 {
     public class Order
     {
+        /// <summary>
+        /// Creates an order based on a store's transaction and items being purchased.
+        /// </summary>
+        /// <param name="store">Store requesting the transaction</param>
+        /// <param name="items">Items being purchased</param>
+        /// <param name="transaction">Transaction being requested</param>
+        public Order(Store store, IEnumerable<Item> items, Operators.Transaction transaction, string orderId)
+        {
+            var card = transaction.CreditCard;
+            var payment = new Payment(transaction);
+
+            ID       = orderId;
+            Date     = DateTime.Today;
+            Email    = card.Holder.Email;
+            IP       = store.IpAddress;
+            Currency = "BRL"; // Assuming that all transactions are performed in native currency (easy to extend)
+
+            Payments     = new List<Payment>() { payment };
+            ShippingData = store.Owner;
+            BillingData  = card.Holder;
+            Items        = items;
+        }
+
         /// <summary>
         /// Class constructor, requires all mandatory fields.
         /// </summary>
@@ -52,7 +78,7 @@ namespace PaymentGateway.Model.Entity.AntiFraud
         /// <summary>
         /// Sum of items values.
         /// </summary>
-        public decimal TotalItems => Items.Sum(x => x.ItemValue);
+        public decimal TotalItems => Items.Sum(i => i.ItemValue * i.Qty);
 
         /// <summary>
         /// Total order value.

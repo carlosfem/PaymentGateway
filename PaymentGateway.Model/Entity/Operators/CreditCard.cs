@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Data;
+using Newtonsoft.Json;
 
 using PaymentGateway.Model.Business;
 using PaymentGateway.Model.Repository;
@@ -8,27 +9,65 @@ using PaymentGateway.Model.Repository;
 
 namespace PaymentGateway.Model.Entity.Operators
 {
+    [JsonObject("CreditCard")]
     public class CreditCard
     {
         /// <summary>
+        /// Standard constructor, required for Json deserialization.
+        /// </summary>
+        public CreditCard()
+        {
+
+        }
+
+        /// <summary>
         /// Class constructor requires all mandatory fields.
         /// </summary>
-        public CreditCard(CreditCardBrandEnum brand, string number, int month, int year, Person holder, string security)
+        public CreditCard(CreditCardBrandEnum brand, string number, DateTime expiration, Person holder, string security)
         {
             CreditCardBrand  = brand;
             CreditCardNumber = number;
-            ExpMonth         = month;
-            ExpYear          = year;
+            Expiration       = expiration;
             Holder           = holder;
             SecurityCode     = security;
         }
 
+
+
+        [JsonIgnore()]
+        public DateTime Expiration { get; set; }
+
+        [JsonIgnore()]
         public CreditCardBrandEnum CreditCardBrand { get; set; }
-        public string CreditCardNumber { get; set; }
-        public int ExpMonth { get; set; }
-        public int ExpYear { get; set; }
+
+        [JsonIgnore()]
         public Person Holder { get; set; }
+
+
+
+        [JsonProperty("CardNumber")]
+        public string CreditCardNumber { get; set; }
+
+        [JsonProperty("Brand")]
+        public string CreditCardBrandAsString => CreditCardBrand.GetDescription();
+
+        [JsonProperty("Holder")]
+        public string HolderName => Holder.Name;
+
+        [JsonProperty("ExpirationDate")]
+        public string ExpirationAsString
+        {
+            get
+            {
+                var strMonth = Expiration.Month.ToString();
+                strMonth = strMonth.Length == 1 ? "0" + strMonth : strMonth;
+                return $"{strMonth}/{Expiration.Year}";
+            }
+        }
+
+        [JsonProperty("SecurityCode")]
         public string SecurityCode { get; set; }
+
 
 
         /// <summary>
@@ -47,7 +86,7 @@ namespace PaymentGateway.Model.Entity.Operators
 
             var holder = PersonRepository.GetPerson(idHolder);
 
-            return new CreditCard(brand, number, expiration.Month, expiration.Year, holder, security);
+            return new CreditCard(brand, number, expiration, holder, security);
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Data;
 using System.Collections.Generic;
 
@@ -13,12 +14,14 @@ namespace PaymentGateway.Model.Entity
         /// <summary>
         /// Class constructor requires all mandatory fields.
         /// </summary>
-        public Store(int id, string name, IEnumerable<Operator> operators, bool useAntiFraud)
+        public Store(int id, string name, IEnumerable<Operator> operators, AntiFraudInfo antiFraud, string merchantId, string ip)
         {
-            ID           = id;
-            Name         = name;
-            Operators    = operators;
-            UseAntiFraud = useAntiFraud;
+            ID            = id;
+            Name          = name;
+            Operators     = operators;
+            AntiFraudInfo = antiFraud;
+            MerchantId    = merchantId;
+            IpAddress     = ip;
         }
 
         /// <summary>
@@ -37,14 +40,29 @@ namespace PaymentGateway.Model.Entity
         public IEnumerable<Operator> Operators { get; private set; }
 
         /// <summary>
+        /// Information about the anti fraud contract of the store.
+        /// </summary>
+        public AntiFraudInfo AntiFraudInfo { get; private set; }
+
+        /// <summary>
         /// Indicates if the store uses an anti-fraud system.
         /// </summary>
-        public bool UseAntiFraud { get; private set; }
+        public bool UseAntiFraud => AntiFraudInfo is null ? false : true;
 
         /// <summary>
         /// Owner of the store.
         /// </summary>
         public Person Owner { get; private set; }
+
+        /// <summary>
+        /// Identifier for stores that work with Stone.
+        /// </summary>
+        public string MerchantId { get; private set; }
+
+        /// <summary>
+        /// Ip address of the store.
+        /// </summary>
+        public string IpAddress { get; private set; }
 
 
         /// <summary>
@@ -57,19 +75,18 @@ namespace PaymentGateway.Model.Entity
 
             var id           = Helpers.ConvertFromDBVal<int>(row["Id"]);
             var name         = Helpers.ConvertFromDBVal<string>(row["Name"]);
-            var useAntiFraud = Helpers.ConvertFromDBVal<bool>(row["UseAntiFraud"]);
             var idOwner      = Helpers.ConvertFromDBVal<string>(row["IdOwner"]);
-            var owner = PersonRepository.GetPerson(idOwner);
+            var merchantId   = Helpers.ConvertFromDBVal<string>(row["MerchantId"]);
+            var ipAddress    = Helpers.ConvertFromDBVal<string>(row["IpAddress"]);
 
-            try
-            {
-                var operators = StoreRepository.GetStoreOperators(id);
-                return new Store(id, name, operators, useAntiFraud);
-            }
-            catch (InvalidOperationException)
-            {
-                throw new InvalidOperationException("Invalid store. All stores must have at least one credit card operator.");
-            }
+            var owner     = PersonRepository.GetPerson(idOwner);
+            var operators = StoreRepository.GetStoreOperators(id);
+            var antiFraud = StoreRepository.GetStoreAntiFraudInfo(id);
+
+            if (operators.Any(o => o.Name == "Stone") && merchantId is null)
+                throw new InvalidOperationException("Invalid store. All stores working with Stone must have a merchant ID.");
+
+            return new Store(id, name, operators, antiFraud, merchantId, ipAddress);
         }
 
 
