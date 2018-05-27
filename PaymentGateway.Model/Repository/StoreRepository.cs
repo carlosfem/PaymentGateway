@@ -19,9 +19,9 @@ namespace PaymentGateway.Model.Repository
         /// Gets a specific Store register based on the id.
         /// </summary>
         /// <param name="id">Id of the store being searched</param>
-        public static Store GetStore(string id)
+        public static Store GetStore(int id)
         {
-            var sqlQuery = $"select * from Store where Id = '{id}'";
+            var sqlQuery = $"select * from Store where Id = {id}";
             var db = new DbGateway();
             var table = db.Read(sqlQuery);
             var store = (Store)table.Rows.Cast<DataRow>().FirstOrDefault();
@@ -43,6 +43,15 @@ namespace PaymentGateway.Model.Repository
             var db = new DbGateway();
             var table = db.Read(sqlQuery);
             return table.Rows.Cast<DataRow>().Select(x => (Operator)x);
+        }
+
+        /// <summary>
+        /// Stores a transaction.
+        /// </summary>
+        /// <param name="transaction">Transaction to store</param>
+        public static void SaveTransaction(Transaction transaction)
+        {
+            throw new NotImplementedException("Missing!!!");
         }
 
 
