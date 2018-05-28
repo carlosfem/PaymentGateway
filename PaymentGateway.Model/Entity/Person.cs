@@ -10,6 +10,11 @@ namespace PaymentGateway.Model.Entity
 {
     public class Person
     {
+        public Person()
+        {
+
+        }
+
         /// <summary>
         /// Class constructor, requires all mandatory fields.
         /// </summary>

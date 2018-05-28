@@ -28,6 +28,8 @@ namespace PaymentGateway.Model.Business
         public static string GetDescription(this Enum myEnum)
         {
             var fieldInfo = myEnum.GetType().GetField(myEnum.ToString());
+            if (fieldInfo is null) return "";
+
             var attributes = (DescriptionAttribute[])fieldInfo
                 .GetCustomAttributes(typeof(DescriptionAttribute), false);
 

@@ -52,7 +52,7 @@ namespace PaymentGateway.Model.Entity.Operators
         public string CreditCardBrandAsString => CreditCardBrand.GetDescription();
 
         [JsonProperty("Holder")]
-        public string HolderName => Holder.Name;
+        public string HolderName => Holder?.Name;
 
         [JsonProperty("ExpirationDate")]
         public string ExpirationAsString

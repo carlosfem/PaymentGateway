@@ -74,9 +74,11 @@ namespace PaymentGateway.Model.Business
                 {
                     case "Cielo":
                         response = RequestManager.MakeCieloRequest(request);
+                        HandleOperatorResponse(response);
                         break;
                     case "Stone":
                         response = RequestManager.MakeStoneRequest(request, Store.MerchantId);
+                        HandleOperatorResponse(response);
                         break;
                     default:
                         throw new NotImplementedException("Unknown operator!");
@@ -97,11 +99,12 @@ namespace PaymentGateway.Model.Business
         /// <summary>
         /// Update and store the transaction based on the operator's response.
         /// </summary>
-        /// <param name="response"></param>
         public void HandleOperatorResponse(Operators.Response response)
         {
             var transaction = response.Request.Transaction;
-            
+            transaction.Authorized = response.Status == 1;
+            transaction.Message = response.ReturnMessage;
+            StoreRepository.SaveTransaction(transaction);
         }
 
 

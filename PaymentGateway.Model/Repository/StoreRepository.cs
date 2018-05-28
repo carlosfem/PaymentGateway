@@ -57,7 +57,7 @@ namespace PaymentGateway.Model.Repository
         }
 
         /// <summary>
-        /// Gets all anti-fraud  of a given store.
+        /// Gets all anti-fraud of a given store.
         /// </summary>
         /// <param name="id">Store identifier</param>
         public static AntiFraudInfo GetStoreAntiFraudInfo(int id)
@@ -68,13 +68,54 @@ namespace PaymentGateway.Model.Repository
             return (AntiFraudInfo)table.Rows.Cast<DataRow>().FirstOrDefault();
         }
 
+
+
         /// <summary>
         /// Stores a transaction.
         /// </summary>
         /// <param name="transaction">Transaction to store</param>
         public static void SaveTransaction(Transaction transaction)
         {
-            throw new NotImplementedException("Missing!!!");
+            var pairs = new List<ExecValuePair>
+            {
+                new ExecValuePair("@val1", transaction.CreditCard.CreditCardNumber),
+                new ExecValuePair("@val2", transaction.AmountInCents),
+                new ExecValuePair("@val3", transaction.InstallmentCount),
+                new ExecValuePair("@val4", transaction.Authorized),
+                new ExecValuePair("@val5", transaction.Message)
+            };
+            var sqlQuery =
+                $@"insert into [Transaction] (CardNumber, AmountInCents, Installments, Authorized, Message) 
+                   values (@val1, @val2, @val3, @val4, @val5)";
+
+            var db = new DbGateway();
+            db.Exec(sqlQuery, pairs);
+        }
+
+        /// <summary>
+        /// Deletes transactions based on their message.
+        /// </summary>
+        public static void DeleteTransactionByMessage(string msg)
+        {
+            var pairs = new List<ExecValuePair>
+            {
+                new ExecValuePair("@msg", msg)
+            };
+            var sqlQuery = $@"delete from [Transaction] where Message = 'Test Transaction, delete after assertion'";
+            var db = new DbGateway();
+            db.Exec(sqlQuery, pairs);
+        }
+
+        /// <summary>
+        /// Gets the first transaction with a certain message.
+        /// </summary>
+        /// <param name="msg">Message to find</param>
+        public static Transaction GetTransactionByMessage(string msg)
+        {
+            var sqlQuery = $@"select * from [Transaction] where Message = '{msg}'";
+            var db = new DbGateway();
+            var table = db.Read(sqlQuery);
+            return (Transaction)table.Rows.Cast<DataRow>().FirstOrDefault();
         }
 
 

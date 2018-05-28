@@ -11,7 +11,7 @@ namespace PaymentGateway.Model.Entity.AntiFraud
             Orders = orders;
         }
 
-        public IEnumerable<OrderStatus> Orders { get; private set; }
+        public IEnumerable<OrderStatus> Orders { get; set; }
 
 
     } //class

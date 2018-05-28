@@ -4,8 +4,24 @@ using System.Text;
 
 namespace PaymentGateway.Model.Entity.Operators
 {
+    public enum ResponseStatus
+    {
+        Approved = 1,
+        Denied = 2
+    }
+
     public class Response
     {
+        public Response(Request request, ResponseStatus status)
+        {
+            Request       = request;
+            Status        = status == ResponseStatus.Approved ? 1 : 3;
+            ReturnCode    = status == ResponseStatus.Approved ? "0" : "4";
+            ReturnMessage = status == ResponseStatus.Approved 
+                ? "Transaction Approved!" 
+                : "Transaction Denied!";
+        }
+
         /// <summary>
         /// Request information.
         /// </summary>

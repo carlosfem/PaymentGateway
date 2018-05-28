@@ -4,6 +4,7 @@ using System.Linq;
 
 using PaymentGateway.Model.Entity;
 using PaymentGateway.Model.Repository;
+using PaymentGateway.Model.Entity.Operators;
 
 
 namespace PaymentGateway.Test
@@ -75,29 +76,45 @@ namespace PaymentGateway.Test
         }
 
         [Fact]
-        public void insertionFailsForDuplicateStoreId()
+        public void successfullyInsertAndDeleteTransaction()
         {
-            throw new NotImplementedException();
+            var testMessage = "Test Transaction, delete after assertion";
+            var card = PersonRepository.GetCard("123456");
+            var transaction = new Transaction(1000, card, 1)
+            {
+                Authorized = true,
+                Message = testMessage
+            };
+
+            // Inserts the transaction and assert
+            StoreRepository.SaveTransaction(transaction);
+            var fromDb = StoreRepository.GetTransactionByMessage(testMessage);
+            Assert.NotNull(fromDb);
+            StoreRepository.DeleteTransactionByMessage(testMessage);
+
+            Assert.Throws<InvalidOperationException>(() => {
+                StoreRepository.GetTransactionByMessage(testMessage);
+            });
         }
 
-        [Fact]
-        public void insertionFailsForDuplicateStoreOperatorAssociation()
-        {
-            // New store
-            // New store-antifraud
-        }
+        // TODO
+        //[Fact]
+        //public void insertionFailsForDuplicateStoreId()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        [Fact]
-        public void insertionFailsForCreditCardWithInvalidPerson()
-        {
+        //[Fact]
+        //public void insertionFailsForDuplicateStoreOperatorAssociation()
+        //{
 
-        }
+        //}
 
-        [Fact]
-        public void successfullyInsertTransaction()
-        {
-            throw new NotImplementedException();
-        }
+        //[Fact]
+        //public void insertionFailsForCreditCardWithInvalidPerson()
+        //{
+
+        //}
 
 
     } //class

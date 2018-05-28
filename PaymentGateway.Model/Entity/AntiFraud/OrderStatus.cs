@@ -13,9 +13,9 @@ namespace PaymentGateway.Model.Entity.AntiFraud
             Score = score;
         }
 
-        public string IdOrder { get; private set; }
-        public string Status { get; private set; }
-        public decimal Score { get; private set; }
+        public string IdOrder { get; set; }
+        public string Status { get; set; }
+        public decimal Score { get; set; }
 
 
     } //class

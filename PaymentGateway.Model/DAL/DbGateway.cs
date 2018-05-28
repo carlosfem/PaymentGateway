@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Data;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace PaymentGateway.Model.DAL
 {
@@ -48,7 +49,48 @@ namespace PaymentGateway.Model.DAL
             }
         }
 
+        /// <summary>
+        /// Runs an query (insert, update or delete).
+        /// </summary>
+        /// <remarks>
+        /// Can be better abstracted...
+        /// </remarks>
+        public void Exec(string sqlQuery, IEnumerable<ExecValuePair> pairs)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            using (var cmd = new SqlCommand(sqlQuery, connection))
+            {
+                connection.Open();
+                foreach (var pair in pairs)
+                    cmd.Parameters.AddWithValue(pair.Name, pair.Value);
+
+                // Execute
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+            }
+        }
 
 
-    } //class
+    } //class DbGateway
+
+
+
+    /// <summary>
+    /// Helper class to make DB insertions.
+    /// </summary>
+    public class ExecValuePair
+    {
+        public ExecValuePair(string name, object value)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public string Name { get; set; }
+        public object Value { get; set; }
+    }
+
+
+
+
 } //namespace
