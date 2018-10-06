@@ -70,7 +70,7 @@ namespace PaymentGateway.Model.Business
         {
             var jsonRequest = JsonConvert.SerializeObject(request);
             var responses = ApiResponseMock.MockClearSaleResponse(request.Orders, jsonRequest);
-            return responses.SelectMany(r => r.Orders).All(o => o.Status == "APA") ? true : false;
+            return responses.All(r => r.AllValid) ? true : false;
         }
 
 

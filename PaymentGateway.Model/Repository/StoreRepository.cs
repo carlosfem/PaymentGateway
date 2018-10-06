@@ -78,15 +78,15 @@ namespace PaymentGateway.Model.Repository
         {
             var pairs = new List<ExecValuePair>
             {
-                new ExecValuePair("@val1", transaction.CreditCard.CreditCardNumber),
-                new ExecValuePair("@val2", transaction.AmountInCents),
-                new ExecValuePair("@val3", transaction.InstallmentCount),
-                new ExecValuePair("@val4", transaction.Authorized),
-                new ExecValuePair("@val5", transaction.Message)
+                new ExecValuePair("@cardNumber", transaction.CreditCard.CreditCardNumber),
+                new ExecValuePair("@amount", transaction.AmountInCents),
+                new ExecValuePair("@installments", transaction.InstallmentCount),
+                new ExecValuePair("@authorized", transaction.Authorized),
+                new ExecValuePair("@msg", transaction.Message)
             };
             var sqlQuery =
                 $@"insert into [Transaction] (CardNumber, AmountInCents, Installments, Authorized, Message) 
-                   values (@val1, @val2, @val3, @val4, @val5)";
+                   values (@cardNumber, @amount, @installments, @authorized, @msg)";
 
             var db = new DbGateway();
             db.Exec(sqlQuery, pairs);

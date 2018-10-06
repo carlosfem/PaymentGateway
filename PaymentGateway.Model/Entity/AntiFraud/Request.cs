@@ -28,7 +28,7 @@ namespace PaymentGateway.Model.Entity.AntiFraud
         public string LoginToken { get; private set; }
 
         /// <summary>
-        /// Others to send in the authentication request.
+        /// Orders to send in the authentication request.
         /// </summary>
         public IEnumerable<Order> Orders { get; private set; }
 

@@ -94,25 +94,6 @@ namespace PaymentGateway.Test
             });
         }
 
-        // TODO
-        //[Fact]
-        //public void insertionFailsForDuplicateStoreId()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //[Fact]
-        //public void insertionFailsForDuplicateStoreOperatorAssociation()
-        //{
-
-        //}
-
-        //[Fact]
-        //public void insertionFailsForCreditCardWithInvalidPerson()
-        //{
-
-        //}
-
 
     } //class
 } //namespace

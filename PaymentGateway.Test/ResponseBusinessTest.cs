@@ -51,14 +51,14 @@ namespace PaymentGateway.Test
             var req1 = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
             var jsonRequest = JsonConvert.SerializeObject(req1);
             var responseAF = ApiResponseMock.MockClearSaleResponse(orders, jsonRequest);
-            var status = responseAF.Orders.First();
+            var allValid = responseAF.All(r => r.AllValid);
 
             // Operator step
             var req2 = new Operators.Request(transaction, _orderId);
             var responseOP = RequestManager.MakeCieloRequest(req2);
 
             // Assertions
-            Assert.Equal("APA",  status.Status);
+            Assert.True(allValid);
             Assert.Equal(1, responseOP.Status);
             Assert.Equal("0", responseOP.ReturnCode);
         }
@@ -75,9 +75,9 @@ namespace PaymentGateway.Test
             var request = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
             var jsonRequest = JsonConvert.SerializeObject(request);
             var response = ApiResponseMock.MockClearSaleResponse(orders, jsonRequest);
-            var status = response.Orders.First();
+            var allValid = response.All(r => r.AllValid);
 
-            Assert.NotEqual("APA", status.Status);
+            Assert.False(allValid);
         }
 
         [Fact]
