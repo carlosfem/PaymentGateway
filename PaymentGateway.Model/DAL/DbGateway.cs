@@ -48,7 +48,7 @@ namespace PaymentGateway.Model.DAL
         /// <summary>
         /// Connection string to establish the connection with the database.
         /// </summary>
-        private string connectionString { get; private set; }
+        private string connectionString { get; set; }
 
 
         /// <summary>
