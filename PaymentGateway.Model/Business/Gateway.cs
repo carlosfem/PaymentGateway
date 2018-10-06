@@ -21,29 +21,12 @@ namespace PaymentGateway.Model.Business
             Store = StoreRepository.GetStore(idStore);
         }
 
+
         /// <summary>
         /// Store instance.
         /// </summary>
         public Store Store { get; set; }
 
-        /// <summary>
-        /// Processes the anti-fraud step if necessary.
-        /// </summary>
-        /// <returns>
-        /// True if the sale is authorized by the anti-fraud system or if the store doesnt use the system.
-        /// </returns>
-        public bool EvaluateAntiFraud(IEnumerable<AntiFraud.Item> items, Operators.Transaction transaction, string orderId)
-        {
-            if (Store.UseAntiFraud)
-            {
-                var order = new AntiFraud.Order(Store, items, transaction, orderId);
-                var orders = new List<AntiFraud.Order>() { order };
-                var request = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
-                return RequestManager.MakeAntiFraudRequest(request);
-            }
-            else
-                return true;
-        }
 
         /// <summary>
         /// Makes a sale request.
@@ -63,28 +46,26 @@ namespace PaymentGateway.Model.Business
             var orderId = Guid.NewGuid().ToString();
 
             // Check AntiFraud
-            if (EvaluateAntiFraud(items, transaction, orderId))
+            if (evaluateAntiFraud(items, transaction, orderId))
             {
                 // Makes request to the operator
                 var request = new Operators.Request(transaction, orderId);
                 Operators.Response response;
 
                 var op = Store.Operators.ElementAt(operatorIndex);
-                switch (op.Name)
+                switch (op.Brand)
                 {
-                    case "Cielo":
+                    case OperatorBrandEnum.Cielo:
                         response = RequestManager.MakeCieloRequest(request);
-                        HandleOperatorResponse(response);
                         break;
-                    case "Stone":
+                    case OperatorBrandEnum.Stone:
                         response = RequestManager.MakeStoneRequest(request, Store.MerchantId);
-                        HandleOperatorResponse(response);
                         break;
                     default:
                         throw new NotImplementedException("Unknown operator!");
                 }
 
-                // Do something about the response (store the transaction)
+                handleOperatorResponse(response);
             }
             else
             {
@@ -97,9 +78,29 @@ namespace PaymentGateway.Model.Business
 
 
         /// <summary>
+        /// Processes the anti-fraud step if necessary.
+        /// </summary>
+        /// <returns>
+        /// True if the sale is authorized by the anti-fraud system or if the store doesnt use the system.
+        /// </returns>
+        private bool evaluateAntiFraud(IEnumerable<AntiFraud.Item> items, Operators.Transaction transaction, string orderId)
+        {
+            if (Store.UseAntiFraud)
+            {
+                var order = new AntiFraud.Order(Store, items, transaction, orderId);
+                var orders = new List<AntiFraud.Order>() { order };
+                var request = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
+                return RequestManager.MakeAntiFraudRequest(request);
+            }
+            else
+                return true;
+        }
+
+
+        /// <summary>
         /// Update and store the transaction based on the operator's response.
         /// </summary>
-        public void HandleOperatorResponse(Operators.Response response)
+        private void handleOperatorResponse(Operators.Response response)
         {
             var transaction = response.Request.Transaction;
             transaction.Authorized = response.Status == 1;

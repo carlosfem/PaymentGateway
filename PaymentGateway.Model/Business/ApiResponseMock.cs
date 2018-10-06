@@ -66,21 +66,24 @@ namespace PaymentGateway.Model.Business
 
 
         /// <summary>
-        /// Mocks the response of the Cielo API and converts it to the domain specific response.
+        /// Mocks the response of the anti-fraud system and converts it to the domain specific response.
         /// </summary>
         /// <returns>Domain specific Response object</returns>
-        public static AntiFraud.Response MockClearSaleResponse(IEnumerable<AntiFraud.Order> orders, string jsonRequest)
+        public static IEnumerable<AntiFraud.Response> MockClearSaleResponse(IEnumerable<AntiFraud.Order> orders, string jsonRequest)
         {
-            var order = orders.First();
-            var cardNumber = order.Payments.First().CardNumber;
-            var status = cardNumber == _fraudGuyCardNumber ? "FRD" : "APA";
-            var score = cardNumber == _fraudGuyCardNumber ? 0 : 100.0;
+            var responses = orders.Select(order =>
+            {
+                var cardNumber = order.Payments.First().CardNumber;
+                var status = cardNumber == _fraudGuyCardNumber ? "FRD" : "APA";
+                var score = cardNumber == _fraudGuyCardNumber ? 0 : 100.0;
 
-            var mockedString = "{\"Orders\":[{\"IdOrder\":" 
-                + $"\"{orders.First().ID}\",\"Status\":\"{status}\",\"Score\":{score}" 
-                + "}]}";
-            var response = JsonConvert.DeserializeObject<AntiFraud.Response>(mockedString);
-            return response;
+                var mockedString = "{\"Orders\":[{\"IdOrder\":"
+                    + $"\"{orders.First().ID}\",\"Status\":\"{status}\",\"Score\":{score}"
+                    + "}]}";
+                return JsonConvert.DeserializeObject<AntiFraud.Response>(mockedString);
+            });
+
+            return responses;
         }
 
 

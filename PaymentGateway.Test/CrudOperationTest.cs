@@ -12,9 +12,6 @@ namespace PaymentGateway.Test
     /// <summary>
     /// Unit test class for CRUD operations on the database.
     /// </summary>
-    /// <remarks>
-    /// Ideally a test database should be used. For simplicity, the tests will be performed on the same database.
-    /// </remarks>
     public class CrudOperationTest
     {
         [Fact]

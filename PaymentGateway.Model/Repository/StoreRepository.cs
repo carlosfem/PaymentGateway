@@ -101,7 +101,7 @@ namespace PaymentGateway.Model.Repository
             {
                 new ExecValuePair("@msg", msg)
             };
-            var sqlQuery = $@"delete from [Transaction] where Message = 'Test Transaction, delete after assertion'";
+            var sqlQuery = $@"delete from [Transaction] where Message = @msg";
             var db = new DbGateway();
             db.Exec(sqlQuery, pairs);
         }

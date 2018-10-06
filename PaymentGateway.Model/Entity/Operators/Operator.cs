@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Data;
+using System.ComponentModel;
 
 using PaymentGateway.Model.Business;
 
 
 namespace PaymentGateway.Model.Entity
 {
+    public enum OperatorBrandEnum
+    {
+        [Description("Cielo")]
+        Cielo = 1,
+        [Description("Stone")]
+        Stone = 2,
+        [Description("Desconhecido")]
+        Desconhecido = 3
+    }
+
     public class Operator
     {
         /// <summary>
@@ -13,8 +24,9 @@ namespace PaymentGateway.Model.Entity
         /// </summary>
         public Operator(int id, string name)
         {
-            ID   = id;
-            Name = name;
+            ID    = id;
+            Name  = name;
+            Brand = (OperatorBrandEnum)Enum.Parse(typeof(OperatorBrandEnum), name);
         }
 
         /// <summary>
@@ -27,6 +39,10 @@ namespace PaymentGateway.Model.Entity
         /// </summary>
         public string Name { get; private set; }
 
+        /// <summary>
+        /// Brand of the operator.
+        /// </summary>
+        public OperatorBrandEnum Brand { get; private set; }
 
         /// <summary>
         /// Conversion from a DataRow into a Operator instance.

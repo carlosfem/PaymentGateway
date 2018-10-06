@@ -52,9 +52,6 @@ namespace PaymentGateway.Model.DAL
         /// <summary>
         /// Runs an query (insert, update or delete).
         /// </summary>
-        /// <remarks>
-        /// Can be better abstracted...
-        /// </remarks>
         public void Exec(string sqlQuery, IEnumerable<ExecValuePair> pairs)
         {
             using (var connection = new SqlConnection(ConnectionString))

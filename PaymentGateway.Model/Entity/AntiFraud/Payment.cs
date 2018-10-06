@@ -21,7 +21,7 @@ namespace PaymentGateway.Model.Entity.AntiFraud
             Type   = 1; // Only credit card transactions
 
             SetCardInfo(
-                GetCardType(card.CreditCardBrand),
+                (int)card.CreditCardBrand,
                 card.CreditCardNumber,
                 card.Holder.Name,
                 card.ExpirationAsString
@@ -60,24 +60,6 @@ namespace PaymentGateway.Model.Entity.AntiFraud
 
         public int PaymentTypeID { get; set; }
         public string CardBin { get; set; }
-
-        /// <summary>
-        /// Gets the card type according to the given card brand enum.
-        /// </summary>
-        private int GetCardType(CreditCardBrandEnum cardBrand)
-        {
-            switch (cardBrand.GetDescription())
-            {
-                case "MasterCard":
-                    return 2;
-                case "Visa":
-                    return 3;
-                case "HiperCard":
-                    return 6;
-                default:
-                    return 4;
-            }
-        }
 
 
     } //class

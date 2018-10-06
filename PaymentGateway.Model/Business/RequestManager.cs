@@ -24,11 +24,10 @@ namespace PaymentGateway.Model.Business
         public static Entity.Operators.Response MakeStoneRequest(Entity.Operators.Request request, string merchantId)
         {
             var card = request.Transaction.CreditCard;
-
             
             var transaction = new // Mock CreditCardTransaction
             {
-                AmountInCents = 10000,
+                AmountInCents = request.Transaction.AmountInCents,
                 CreditCard = new
                 {
                     CreditCardBrand  = card.CreditCardBrand,
@@ -38,7 +37,7 @@ namespace PaymentGateway.Model.Business
                     HolderName       = card.Holder.Name,
                     SecurityCode     = card.SecurityCode
                 },
-                InstallmentCount = 1
+                InstallmentCount = request.Transaction.InstallmentCount
             };
 
             var createSaleRequest = new // Mock CreateSaleRequest
@@ -47,7 +46,8 @@ namespace PaymentGateway.Model.Business
                 Order = new { OrderReference = request.OrderId }
             };
             
-            // Cria o client que enviará a transação.
+            // Here the request would be made and the http response would be paarsed, mocking the response instead.
+
             //var merchantKey = Guid.Parse(merchantId);
             //var serviceClient = new GatewayServiceClient(merchantKey, new Uri("https://transaction.stone.com.br"));
             //var httpResponse = serviceClient.Sale.Create(createSaleRequest);
@@ -69,10 +69,8 @@ namespace PaymentGateway.Model.Business
         public static bool MakeAntiFraudRequest(Entity.AntiFraud.Request request)
         {
             var jsonRequest = JsonConvert.SerializeObject(request);
-            var response = ApiResponseMock.MockClearSaleResponse(request.Orders, jsonRequest);
-
-            // Here I'm assuming there's only one order to process, as was assumed throughout the API (easy to extend)
-            return response.Orders.First().Status == "APA" ? true : false;
+            var responses = ApiResponseMock.MockClearSaleResponse(request.Orders, jsonRequest);
+            return responses.SelectMany(r => r.Orders).All(o => o.Status == "APA") ? true : false;
         }
 
 

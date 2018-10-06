@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 using PaymentGateway.Model.Business;
 using PaymentGateway.Model.Repository;
@@ -9,6 +10,24 @@ using PaymentGateway.Model.Repository;
 
 namespace PaymentGateway.Model.Entity.Operators
 {
+    /// <summary>
+    /// Enum with the credit card brand options.
+    /// </summary>
+    /// <remarks>
+    /// The integer value represents the brand type for the AntiFraud system.
+    /// </remarks>
+    public enum CreditCardBrandEnum
+    {
+        [Description("Elo")]
+        Elo = 4,
+        [Description("Visa")]
+        Visa = 3,
+        [Description("Hipercard")]
+        Hipercard = 6,
+        [Description("Mastercard")]
+        Mastercard = 2
+    }
+
     [JsonObject("CreditCard")]
     public class CreditCard
     {
