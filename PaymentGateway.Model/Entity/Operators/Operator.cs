@@ -44,6 +44,7 @@ namespace PaymentGateway.Model.Entity
         /// </summary>
         public OperatorBrandEnum Brand { get; private set; }
 
+
         /// <summary>
         /// Conversion from a DataRow into a Operator instance.
         /// </summary>

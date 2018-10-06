@@ -16,7 +16,8 @@ namespace PaymentGateway.Model.Entity.AntiFraud
         /// <param name="store">Store requesting the transaction</param>
         /// <param name="items">Items being purchased</param>
         /// <param name="transaction">Transaction being requested</param>
-        public Order(Store store, IEnumerable<Item> items, Operators.Transaction transaction, string orderId)
+        /// <param name="currency">Base currency for the transaction</param>
+        public Order(Store store, IEnumerable<Item> items, Operators.Transaction transaction, string orderId, string currency = "BRL")
         {
             var card = transaction.CreditCard;
             var payment = new Payment(transaction);
@@ -25,65 +26,29 @@ namespace PaymentGateway.Model.Entity.AntiFraud
             Date     = DateTime.Today;
             Email    = card.Holder.Email;
             IP       = store.IpAddress;
-            Currency = "BRL"; // Assuming that all transactions are performed in native currency (easy to extend)
-
-            Payments     = new List<Payment>() { payment };
-            ShippingData = store.Owner;
-            BillingData  = card.Holder;
-            Items        = items;
-        }
-
-        /// <summary>
-        /// Class constructor, requires all mandatory fields.
-        /// </summary>
-        public Order(string id, DateTime date, string email, string ip, string currency,
-            IEnumerable<Payment> payments, Person seller, Person buyer, IEnumerable<Item> items)
-        {
-            // Mandatory
-            ID       = id;
-            Date     = date;
-            Email    = email;
-            IP       = ip;
             Currency = currency;
 
-            Payments     = payments;
-            ShippingData = seller;
-            BillingData  = buyer;
             Items        = items;
+            Payments     = new List<Payment>() { payment };
+            BillingData  = card.Holder;
+            ShippingData = store.Owner;
 
             // Optional
+            TotalShipping = 0;
             Obs = string.Empty;
             Status = "N";
             Reanalysis = false;
             CustomFields = new List<CustomFields>();
         }
 
+
+        // Mandatory fields
         public string ID { get; private set; }
         public DateTime Date { get; private set; }
         public string Email { get; private set; }
         public string IP { get; private set; }
         public string Currency { get; private set; }
         public string Origin { get; private set; }
-
-        public string Obs { get; set; }
-        public string Status { get; set; }
-        public bool Reanalysis { get; set; }
-        public IEnumerable<CustomFields> CustomFields { get; set; }
-
-        /// <summary>
-        /// Total shipping value.
-        /// </summary>
-        public decimal TotalShipping { get; set; }
-
-        /// <summary>
-        /// Sum of items values.
-        /// </summary>
-        public decimal TotalItems => Items.Sum(i => i.ItemValue * i.Qty);
-
-        /// <summary>
-        /// Total order value.
-        /// </summary>
-        public decimal TotalOrder => TotalShipping + TotalItems;
 
         /// <summary>
         /// Payments associated to the order.
@@ -104,6 +69,28 @@ namespace PaymentGateway.Model.Entity.AntiFraud
         /// Order items.
         /// </summary>
         public IEnumerable<Item> Items { get; private set; }
+
+
+        // Optional fields
+        public string Obs { get; set; }
+        public string Status { get; set; }
+        public bool Reanalysis { get; set; }
+        public IEnumerable<CustomFields> CustomFields { get; set; }
+
+        /// <summary>
+        /// Total shipping value.
+        /// </summary>
+        public decimal TotalShipping { get; set; }
+
+        /// <summary>
+        /// Sum of items values.
+        /// </summary>
+        public decimal TotalItems => Items.Sum(i => i.ItemValue * i.Qty);
+
+        /// <summary>
+        /// Total order value.
+        /// </summary>
+        public decimal TotalOrder => TotalShipping + TotalItems;
 
 
     } //class

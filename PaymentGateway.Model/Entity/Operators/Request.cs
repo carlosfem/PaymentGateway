@@ -17,13 +17,7 @@ namespace PaymentGateway.Model.Entity.Operators
     /// </summary>
     public class Request
     {
-        /// <summary>
-        /// Standard constructor, required for Json deserialization.
-        /// </summary>
-        public Request()
-        {
-
-        }
+        public Request() { }
 
         public Request(Transaction transaction, string orderIdentifier)
         {

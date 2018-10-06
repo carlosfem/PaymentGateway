@@ -21,21 +21,14 @@ namespace PaymentGateway.Model.Entity.AntiFraud
             Categoryname = string.Empty;
         }
 
-        /// <summary>
-        /// Sets the optional fields
-        /// </summary>
-        public void SetOptionalFields(bool isGift, int categoryId, string categoryName)
-        {
-            Gift         = isGift ? 1 : 0;
-            CategoryId   = categoryId;
-            Categoryname = categoryName;
-        }
 
+        // Mandatory fields
         public string ID { get; private set; }
         public string ProductName { get; private set; }
         public decimal ItemValue { get; private set; }
         public int Qty { get; private set; }
 
+        // Optional fields
         public int Gift { get; set; }
         public int CategoryId { get; set; }
         public string Categoryname { get; set; }

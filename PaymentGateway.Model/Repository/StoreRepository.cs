@@ -40,7 +40,7 @@ namespace PaymentGateway.Model.Repository
         }
 
         /// <summary>
-        /// Gets all operators of a given store.
+        /// Gets all operators associated to a given store.
         /// </summary>
         /// <param name="id">Store identifier</param>
         public static IEnumerable<Operator> GetStoreOperators(int id)
@@ -57,7 +57,7 @@ namespace PaymentGateway.Model.Repository
         }
 
         /// <summary>
-        /// Gets all anti-fraud of a given store.
+        /// Gets all anti-fraud records associated to a given store.
         /// </summary>
         /// <param name="id">Store identifier</param>
         public static AntiFraudInfo GetStoreAntiFraudInfo(int id)
@@ -68,10 +68,21 @@ namespace PaymentGateway.Model.Repository
             return (AntiFraudInfo)table.Rows.Cast<DataRow>().FirstOrDefault();
         }
 
+        /// <summary>
+        /// Gets the first transaction with a certain message.
+        /// </summary>
+        /// <param name="msg">Message to find</param>
+        public static Transaction GetTransactionByMessage(string msg)
+        {
+            var sqlQuery = $@"select * from [Transaction] where Message = '{msg}'";
+            var db = new DbGateway();
+            var table = db.Read(sqlQuery);
+            return (Transaction)table.Rows.Cast<DataRow>().FirstOrDefault();
+        }
 
 
         /// <summary>
-        /// Stores a transaction.
+        /// Saves a transaction.
         /// </summary>
         /// <param name="transaction">Transaction to store</param>
         public static void SaveTransaction(Transaction transaction)
@@ -104,18 +115,6 @@ namespace PaymentGateway.Model.Repository
             var sqlQuery = $@"delete from [Transaction] where Message = @msg";
             var db = new DbGateway();
             db.Exec(sqlQuery, pairs);
-        }
-
-        /// <summary>
-        /// Gets the first transaction with a certain message.
-        /// </summary>
-        /// <param name="msg">Message to find</param>
-        public static Transaction GetTransactionByMessage(string msg)
-        {
-            var sqlQuery = $@"select * from [Transaction] where Message = '{msg}'";
-            var db = new DbGateway();
-            var table = db.Read(sqlQuery);
-            return (Transaction)table.Rows.Cast<DataRow>().FirstOrDefault();
         }
 
 

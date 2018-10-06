@@ -74,7 +74,5 @@ namespace PaymentGateway.Model.Repository
         }
 
 
-
-
     } //class
 } //namespace

@@ -14,7 +14,6 @@ namespace PaymentGateway.Model.Entity
             LoginToken = token;
         }
 
-
         public string ApiKey { get; private set; }
         public string LoginToken { get; private set; }
 
@@ -29,7 +28,6 @@ namespace PaymentGateway.Model.Entity
 
             var key = Helpers.ConvertFromDBVal<string>(row["ApiKey"]);
             var login = Helpers.ConvertFromDBVal<string>(row["LoginToken"]);
-
             return new AntiFraudInfo(key, login);
         }
 

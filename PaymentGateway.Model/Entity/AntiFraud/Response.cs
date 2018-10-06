@@ -9,7 +9,7 @@ namespace PaymentGateway.Model.Entity.AntiFraud
     {
         private const string VALID_CODE = "APA";
 
-        public Response(IEnumerable<OrderStatus> orders )
+        public Response(IEnumerable<OrderStatus> orders)
         {
             Orders = orders;
         }

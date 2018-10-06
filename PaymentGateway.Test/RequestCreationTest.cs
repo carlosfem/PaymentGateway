@@ -3,9 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using PaymentGateway.Model.Entity;
 using PaymentGateway.Model.Business;
-using PaymentGateway.Model.Repository;
 using Operators = PaymentGateway.Model.Entity.Operators;
 using AntiFraud = PaymentGateway.Model.Entity.AntiFraud;
 
@@ -22,49 +20,34 @@ namespace PaymentGateway.Test
         /// </summary>
         public RequestCreationTest()
         {
-            Store = StoreRepository.GetStore(1);
-            Card = PersonRepository.GetCard("123456");
-            Items = new AntiFraud.Item[]
-            {
-                new AntiFraud.Item("1", "Item1", 10, 2),
-                new AntiFraud.Item("2", "Item2", 20, 3),
-                new AntiFraud.Item("3", "Item3", 30, 4),
-                new AntiFraud.Item("4", "Item4", 40, 5)
-            };
+            Test = new TestCase();   
         }
-
-        private const int _installments = 1;
-        private const string _orderId = "#123456789#";
-
-        private decimal Amount => Items.Sum(i => i.ItemValue * i.Qty);
-        private Store Store { get; set; }
-        private Operators.CreditCard Card { get; set; }
-        private IEnumerable<AntiFraud.Item> Items { get; set; }
+        private TestCase Test { get; set; }
 
 
         [Fact]
         public void successfullyCreatesOperatorRequest()
         {
             // Setup
-            var transaction = new Operators.Transaction(Amount, Card, _installments);
-            var request = new Operators.Request(transaction, _orderId);
+            var transaction = new Operators.Transaction(Test.Amount, Test.Card, Test.Installments);
+            var request = new Operators.Request(transaction, Test.OrderId);
 
             // Assertions
             Assert.Equal("Carlos", request.Customer.Name);
-            Assert.Equal(_orderId, request.OrderId);
+            Assert.Equal(Test.OrderId, request.OrderId);
             Assert.Equal(400, request.Transaction.AmountInCents);
-            Assert.Equal(_installments, request.Transaction.InstallmentCount);
+            Assert.Equal(Test.Installments, request.Transaction.InstallmentCount);
         }
 
         [Fact]
         public void successfullyCreatesAntiFraudRequest()
         {
             // Setup
-            var transaction = new Operators.Transaction(Amount, Card, _installments);
-            var order = new AntiFraud.Order(Store, Items, transaction, _orderId);
+            var transaction = new Operators.Transaction(Test.Amount, Test.Card, Test.Installments);
+            var order = new AntiFraud.Order(Test.Store, Test.Items, transaction, Test.OrderId);
 
             var orders = new List<AntiFraud.Order>() { order };
-            var request = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
+            var request = new AntiFraud.Request(Test.Store.AntiFraudInfo.ApiKey, Test.Store.AntiFraudInfo.LoginToken, orders, "BRA");
 
             // Assertions
             Assert.Equal("Carlos Key", request.ApiKey);
@@ -79,7 +62,7 @@ namespace PaymentGateway.Test
             var gatewayWithInvalidOperator = new Gateway(1);
             var invalidOperatorIndex = 2;
             Assert.Throws<NotImplementedException>(() => {
-                gatewayWithInvalidOperator.MakeRequest(Items, _installments, Card, invalidOperatorIndex);
+                gatewayWithInvalidOperator.MakeRequest(Test.Items, Test.Installments, Test.Card, invalidOperatorIndex);
                 }
             );
         }
@@ -89,7 +72,7 @@ namespace PaymentGateway.Test
         {
             var gatewayWithInvalidOperator = new Gateway(1);
             Assert.Throws<InvalidOperationException>(() => {
-                gatewayWithInvalidOperator.MakeRequest(Items, _installments, Card, 111);
+                gatewayWithInvalidOperator.MakeRequest(Test.Items, Test.Installments, Test.Card, 111);
             });
         }
 

@@ -12,21 +12,15 @@ namespace PaymentGateway.Model.Entity.Operators
     [JsonObject("Payment")]
     public class Transaction
     {
-        /// <summary>
-        /// Standard constructor, required for Json deserialization.
-        /// </summary>
-        public Transaction()
-        {
-
-        }
+        public Transaction() { }
 
         /// <summary>
         /// Class constructor requires all mandatory fields.
         /// </summary>
-        public Transaction(decimal amount, CreditCard card, int installments)
+        public Transaction(decimal amount, CreditCard card, int installments, string type = "CreditCard")
         {
             AmountInCents    = amount;
-            Type             = "CreditCard";
+            Type             = type;
             CreditCard       = card;
             InstallmentCount = installments;
         }

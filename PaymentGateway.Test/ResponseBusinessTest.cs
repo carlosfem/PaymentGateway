@@ -20,41 +20,26 @@ namespace PaymentGateway.Test
         /// </summary>
         public ResponseBusinessTest()
         {
-            Store = StoreRepository.GetStore(1);
-            Card = PersonRepository.GetCard("123456");
-            Items = new AntiFraud.Item[]
-            {
-                new AntiFraud.Item("1", "Item1", 10, 2),
-                new AntiFraud.Item("2", "Item2", 20, 3),
-                new AntiFraud.Item("3", "Item3", 30, 4),
-                new AntiFraud.Item("4", "Item4", 40, 5)
-            };
+            Test = new TestCase();
         }
-
-        private const int _installments = 1;
-        private const string _orderId = "#123456789#";
-
-        private decimal Amount => Items.Sum(i => i.ItemValue * i.Qty);
-        private Store Store { get; set; }
-        private Operators.CreditCard Card { get; set; }
-        private IEnumerable<AntiFraud.Item> Items { get; set; }
+        private TestCase Test { get; set; }
 
 
         [Fact]
         public void validRequestIsAuthorized()
         {
-            var transaction = new Operators.Transaction(Amount, Card, _installments);
-            var order = new AntiFraud.Order(Store, Items, transaction, _orderId);
+            var transaction = new Operators.Transaction(Test.Amount, Test.Card, Test.Installments);
+            var order = new AntiFraud.Order(Test.Store, Test.Items, transaction, Test.OrderId);
 
             // Antifraud step
             var orders = new List<AntiFraud.Order>() { order };
-            var req1 = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
+            var req1 = new AntiFraud.Request(Test.Store.AntiFraudInfo.ApiKey, Test.Store.AntiFraudInfo.LoginToken, orders, "BRA");
             var jsonRequest = JsonConvert.SerializeObject(req1);
             var responseAF = ApiResponseMock.MockClearSaleResponse(orders, jsonRequest);
             var allValid = responseAF.All(r => r.AllValid);
 
             // Operator step
-            var req2 = new Operators.Request(transaction, _orderId);
+            var req2 = new Operators.Request(transaction, Test.OrderId);
             var responseOP = RequestManager.MakeCieloRequest(req2);
 
             // Assertions
@@ -67,12 +52,12 @@ namespace PaymentGateway.Test
         public void fraudulentCustomerIsDenied()
         {
             var fraudulentCard = PersonRepository.GetCard("987654");
-            var transaction = new Operators.Transaction(Amount, fraudulentCard, _installments);
-            var order = new AntiFraud.Order(Store, Items, transaction, _orderId);
+            var transaction = new Operators.Transaction(Test.Amount, fraudulentCard, Test.Installments);
+            var order = new AntiFraud.Order(Test.Store, Test.Items, transaction, Test.OrderId);
 
             // Antifraud step
             var orders = new List<AntiFraud.Order>() { order };
-            var request = new AntiFraud.Request(Store.AntiFraudInfo.ApiKey, Store.AntiFraudInfo.LoginToken, orders, "BRA");
+            var request = new AntiFraud.Request(Test.Store.AntiFraudInfo.ApiKey, Test.Store.AntiFraudInfo.LoginToken, orders, "BRA");
             var jsonRequest = JsonConvert.SerializeObject(request);
             var response = ApiResponseMock.MockClearSaleResponse(orders, jsonRequest);
             var allValid = response.All(r => r.AllValid);
@@ -84,11 +69,11 @@ namespace PaymentGateway.Test
         public void poorCustomerIsDenied()
         {
             var poorCard = PersonRepository.GetCard("963258");
-            var transaction = new Operators.Transaction(Amount, poorCard, _installments);
-            var order = new AntiFraud.Order(Store, Items, transaction, _orderId);
+            var transaction = new Operators.Transaction(Test.Amount, poorCard, Test.Installments);
+            var order = new AntiFraud.Order(Test.Store, Test.Items, transaction, Test.OrderId);
 
             // Operator step
-            var request = new Operators.Request(transaction, _orderId);
+            var request = new Operators.Request(transaction, Test.OrderId);
             var response = RequestManager.MakeCieloRequest(request);
 
             Assert.Equal(3, response.Status);

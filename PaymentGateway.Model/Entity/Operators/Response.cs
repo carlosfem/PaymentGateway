@@ -12,14 +12,20 @@ namespace PaymentGateway.Model.Entity.Operators
 
     public class Response
     {
+        private const int APPROVED_STATUS = 1;
+        private const int UNAPPROVED_STATUS = 3;
+        private const string APPROVED_CODE = "0";
+        private const string UNAPPROVED_CODE = "4";
+        private const string APPROVED_MSG = "Transaction Approved!";
+        private const string UNAPPROVED_MSG = "Transaction Denied!";
+
+
         public Response(Request request, ResponseStatus status)
         {
             Request       = request;
-            Status        = status == ResponseStatus.Approved ? 1 : 3;
-            ReturnCode    = status == ResponseStatus.Approved ? "0" : "4";
-            ReturnMessage = status == ResponseStatus.Approved 
-                ? "Transaction Approved!" 
-                : "Transaction Denied!";
+            Status        = status == ResponseStatus.Approved ? APPROVED_STATUS : UNAPPROVED_STATUS;
+            ReturnCode    = status == ResponseStatus.Approved ? APPROVED_CODE : UNAPPROVED_CODE;
+            ReturnMessage = status == ResponseStatus.Approved ? APPROVED_MSG : UNAPPROVED_MSG;
         }
 
         /// <summary>

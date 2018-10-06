@@ -31,13 +31,7 @@ namespace PaymentGateway.Model.Entity.Operators
     [JsonObject("CreditCard")]
     public class CreditCard
     {
-        /// <summary>
-        /// Standard constructor, required for Json deserialization.
-        /// </summary>
-        public CreditCard()
-        {
-
-        }
+        public CreditCard() { }
 
         /// <summary>
         /// Class constructor requires all mandatory fields.

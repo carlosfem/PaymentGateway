@@ -15,8 +15,8 @@ namespace PaymentGateway.Model.Business
     public static class ApiResponseMock
     {
         // Only these 2 cards will be denied in the mocking process.
-        private const string _poorGuyCardNumber = "963258";
-        private const string _fraudGuyCardNumber = "987654";
+        private const string POOR_GUY_NUMBER = "963258";
+        private const string FRAUD_GUY_NUMBER = "987654";
 
         /// <summary>
         /// Mocks the response of the Stone API and converts it to the domain specific response.
@@ -25,7 +25,7 @@ namespace PaymentGateway.Model.Business
         public static Operators.Response MockStoneResponse(Operators.Request request)
         {
             // The Stone API returns a regular c# object, could easily be parsed to the domain Response.
-            var status = request.Transaction.CreditCard.CreditCardNumber == _poorGuyCardNumber
+            var status = request.Transaction.CreditCard.CreditCardNumber == POOR_GUY_NUMBER
                 ? Operators.ResponseStatus.Denied
                 : Operators.ResponseStatus.Approved;
 
@@ -43,9 +43,9 @@ namespace PaymentGateway.Model.Business
             var card = request.Transaction.CreditCard;
 
             // Approval mock
-            var status = card.CreditCardNumber == _poorGuyCardNumber ? 3 : 1;
-            var code = card.CreditCardNumber == _poorGuyCardNumber ? "4" : "0";
-            var msg = card.CreditCardNumber == _poorGuyCardNumber ? "Transaction Denied!" : "Transaction Approved!";
+            var status = card.CreditCardNumber == POOR_GUY_NUMBER ? 3 : 1;
+            var code = card.CreditCardNumber == POOR_GUY_NUMBER ? "4" : "0";
+            var msg = card.CreditCardNumber == POOR_GUY_NUMBER ? "Transaction Denied!" : "Transaction Approved!";
 
             var mockedString =
                 "{\"Request\":{\"Payment\":{\"Amount\":400.0,\"Type\":"
@@ -74,8 +74,8 @@ namespace PaymentGateway.Model.Business
             var responses = orders.Select(order =>
             {
                 var cardNumber = order.Payments.First().CardNumber;
-                var status = cardNumber == _fraudGuyCardNumber ? "FRD" : "APA";
-                var score = cardNumber == _fraudGuyCardNumber ? 0 : 100.0;
+                var status = cardNumber == FRAUD_GUY_NUMBER ? "FRD" : "APA";
+                var score = cardNumber == FRAUD_GUY_NUMBER ? 0 : 100.0;
 
                 var mockedString = "{\"Orders\":[{\"IdOrder\":"
                     + $"\"{orders.First().ID}\",\"Status\":\"{status}\",\"Score\":{score}"
