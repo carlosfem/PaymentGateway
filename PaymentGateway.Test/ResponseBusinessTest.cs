@@ -4,7 +4,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-using PaymentGateway.Model.Entity;
 using PaymentGateway.Model.Business;
 using PaymentGateway.Model.Repository;
 using Operators = PaymentGateway.Model.Entity.Operators;

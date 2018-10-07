@@ -25,7 +25,7 @@ namespace PaymentGateway.Model.Business
         /// <summary>
         /// Store instance.
         /// </summary>
-        public Store Store { get; set; }
+        public Store Store { get; private set; }
 
 
         /// <summary>
